@@ -1,0 +1,90 @@
+.add-small {
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    background: dodgerblue;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25px;
+    display: flex;
+    -webkit-box-shadow: 0 0 10px #787878;
+    -moz-box-shadow: 0 0 10px #787878;
+    box-shadow: 0 0 10px #787878;
+}
+
+.fa-plus {
+    display: block;
+    margin: auto;
+    color: #ffffff;
+}
+
+.boards {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.board {
+    padding: 30px;
+    width: calc((100% - 40px) / 3);
+    margin: 0 0 20px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    -webkit-box-shadow: 0 0 10px #ccc;
+    -moz-box-shadow: 0 0 10px #ccc;
+    box-shadow: 0 0 10px #ccc;
+    box-sizing: border-box;
+}
+
+.board:nth-child(3n-1) {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.title-wrapper {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.add {
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25px;
+    bottom: 50px;
+    right: 50px;
+    display: flex;
+    background: dodgerblue;
+    -webkit-box-shadow: 0 0 10px #787878;
+    -moz-box-shadow: 0 0 10px #787878;
+    box-shadow: 0 0 10px #787878;
+}
+
+.input {
+    border: none;
+    flex: 1;
+    font-weight: 600;
+}
+
+.new-board > button > i {
+    color: dodgerblue;
+}
+
+.new-board {
+    display: flex;
+}
+
+.title {
+    font-weight: 600;
+    text-decoration: none;
+    color: #000000;
+}

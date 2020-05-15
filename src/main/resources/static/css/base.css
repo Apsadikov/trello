@@ -1,0 +1,91 @@
+body {
+    font-family: sans-serif;
+    background: #f9f9f9;
+}
+
+.header-wrapper {
+    display: flex;
+    height: 60px;
+    line-height: 20px;
+    z-index: 2;
+    background: dodgerblue;
+    -webkit-box-shadow: 0 0 10px #cccccc;
+    -moz-box-shadow: 0 0 10px #cccccc;
+    box-shadow: 0 0 10px #cccccc;
+}
+
+.header {
+    max-width: 960px;
+    display: flex;
+    flex: 1;
+    height: 100%;
+    margin: auto;
+    line-height: 60px;
+}
+
+.app-name {
+    color: #ffffff;
+    flex: 1;
+    font-size: 26px;
+    margin-left: 40px;
+    font-weight: 600;
+}
+
+.link {
+    color: #ffffff;
+    margin-right: 40px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.current-language {
+    color: #ffffff;
+    margin-right: 20px;
+    position: relative;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.languages {
+    position: absolute;
+    display: none;
+    margin-top: 10px;
+    background-color: #fff;
+}
+
+.language {
+    color: #000000;
+    padding: 0 40px;
+}
+
+.shadow {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    -webkit-box-shadow: 0 0 10px #ccc;
+    -moz-box-shadow: 0 0 10px #ccc;
+    box-shadow: 0 0 10px #ccc;
+}
+
+.popup {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.5);
+    top: 0;
+    display: flex;
+    z-index: 3;
+    justify-content: center;
+    align-items: center;
+}
+
+.hidden {
+    display: none;
+}
+
+.white {
+    color: #ffffff;
+}

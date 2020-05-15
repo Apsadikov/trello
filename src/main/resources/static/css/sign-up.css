@@ -1,0 +1,56 @@
+.wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 60px);
+}
+
+.sign-in {
+    width: 300px;
+    overflow: hidden;
+    align-items: center;
+}
+
+.sign-up-header {
+    background: dodgerblue;
+    padding: 20px;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: center;
+}
+
+.sign-in-form, .sign-up-form {
+    padding: 20px 40px 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input {
+    border: none;
+    margin-top: 5px;
+}
+
+.send {
+    width: 90%;
+    padding: 8px;
+    border: none;
+    font-weight: 600;
+    margin: 40px auto 0;
+    border-radius: 15px;
+    background: dodgerblue;
+    color: #ffffff;
+}
+
+.hint {
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 20px;
+}
+
+.error {
+    color: #ff253a;
+    margin-top: 3px;
+    font-weight: 600;
+    font-size: 14px;
+}
