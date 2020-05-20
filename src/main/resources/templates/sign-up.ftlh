@@ -1,6 +1,6 @@
 <#import "base.ftlh" as base>
 <#import "/spring.ftl" as spring/>
-<@base.extends css="${css}" link="${link}" linkTitle="${linkTitle}" icon="fa-sign-in-alt">
+<@base.extends css="sign-up" link="/sign-in" linkTitle="sign-in" icon="fa-sign-in-alt">
 <div class="wrapper">
     <div class="sign-in shadow">
         <div class="sign-up-header"><@spring.message code='sign-up-title' /></div>

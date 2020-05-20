@@ -217,6 +217,7 @@
 
 .message-box, .comment-box {
     display: flex;
+    position: relative;
     background: #ffffff;
     -webkit-box-shadow: 0 0 10px #cccccc;
     -moz-box-shadow: 0 0 10px #cccccc;
@@ -348,11 +349,19 @@
     overflow-x: hidden;
 }
 
+.error {
+    color: #ff253a;
+    margin-top: 3px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
 .comments-header, .title-wrapper {
     text-align: center;
     font-weight: 600;
     z-index: 2;
     padding: 20px 0;
+    line-height: 20px;
     display: flex;
 }
 
@@ -389,46 +398,13 @@
     margin-left: 20px;
 }
 
-.edit {
+.close {
     margin-right: 20px;
-}
-
-.edit > i {
-    color: dodgerblue;
-}
-
-.description {
-    position: relative;
-    margin-top: 10px;
-    font-size: 17px;
-    margin-left: 20px;
 }
 
 .card-details {
     padding: 20px;
     position: relative;
-}
-
-.description-title {
-    font-weight: 600;
-    margin-left: 20px;
-    font-size: 20px;
-}
-
-.tools {
-    display: flex;
-    padding: 0 20px 20px;
-}
-
-.tool {
-    background: #cccccc;
-    -webkit-border-radius: 10px;
-    margin-left: 20px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    color: #ffffff;
-    padding: 10px;
-    font-weight: 600;
 }
 
 .members-wrapper {
@@ -445,7 +421,6 @@
 .map {
     width: 100%;
     height: 250px;
-    margin: 20px auto 20px;
 }
 
 .members-wrapper {
@@ -479,6 +454,12 @@
 
 .member {
     padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.member-info {
+    flex: 1;
 }
 
 .name {
@@ -499,4 +480,93 @@
 .archive-card-title {
     font-weight: 600;
     font-size: 16px;
+}
+
+.fa-times {
+    color: #cccccc;
+}
+
+.popup-wrapper {
+    display: none;
+}
+
+.addToArchive {
+    color: dodgerblue;
+    margin-right: 20px;
+}
+
+.deadline-title, .description-title {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.description-input {
+    resize: none;
+    font-family: sans-serif;
+    font-size: 16px;
+    border: none;
+    width: 100%;
+    padding: 0;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 100px;
+    outline: none;
+}
+
+.deadline-input {
+    border: none;
+    font-family: sans-serif;
+    outline: none;
+    margin: 10px 0 10px;
+    font-size: 16px;
+}
+
+.tools {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tool {
+    padding: 20px 40px;
+    background-color: #fff;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-shadow: 0 0 10px #cccccc;
+    -moz-box-shadow: 0 0 10px #cccccc;
+    box-shadow: 0 0 10px #cccccc;
+}
+
+.tool > i {
+    color: dodgerblue;
+    font-size: 20px;
+}
+
+.member-list-wrapper {
+    margin-top: 20px;
+}
+
+.mention {
+    color: dodgerblue;
+    font-weight: 600;
+}
+
+.files {
+    margin-top: 20px;
+}
+
+.member-hint {
+    position: absolute;
+    display: none;
+    bottom: 80px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.member-id {
+    padding: 5px 20px;
+    font-weight: 600;
 }

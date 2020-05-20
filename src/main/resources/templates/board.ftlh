@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/css/board.css">
     <link rel="stylesheet" href="/fontawesome/css/all.min.css">
 </head>
-<body id="body" data-csrf="${_csrf.token}" data-id="${board.getId()}" data-user="${userId}">
+<body id="body" data-user-id="${userId}" data-csrf="${_csrf.token}" data-id="${board.getId()}" data-user="${userId}">
 <div class="wrapper">
     <div class="header-wrapper">
         <div class="header-small">
@@ -39,11 +39,11 @@
                     <i class="fas fa-user-plus"></i>
                     Add member
                 </div>
-                <div class="add-member">
+                <div class="add-member" id="members">
                     <i class="fas fa-users"></i>
                     Members
                 </div>
-                <div class="add-member">
+                <div class="add-member" id="archive">
                     <i class="fas fa-archive"></i>
                     Archive
                 </div>
@@ -59,59 +59,28 @@
                 </div>
             </div>
             <div class="members-list-wrapper">
-                <div class="members-list shadow">
-                    <div class="member">
-                        <div class="name">Ivan</div>
-                        <div class="email">ivan@gmail.com</div>
-                    </div>
-                    <div class="member">
-                        <div class="name">Ivan</div>
-                        <div class="email">ivan@gmail.com</div>
-                    </div>
-                    <div class="member">
-                        <div class="name">Ivan</div>
-                        <div class="email">ivan@gmail.com</div>
-                    </div>
-                    <div class="member">
-                        <div class="name">Ivan</div>
-                        <div class="email">ivan@gmail.com</div>
-                    </div>
-                </div>
-            </div>
-            <div class="members-list-wrapper">
-                <div class="members-list shadow">
-                    <div class="member">
-                        <div class="name">Ivan</div>
-                        <div class="email">ivan@gmail.com</div>
-                    </div>
-                    <div class="member">
-                        <div class="name">Ivan</div>
-                        <div class="email">ivan@gmail.com</div>
-                    </div>
-                    <div class="member">
-                        <div class="name">Ivan</div>
-                        <div class="email">ivan@gmail.com</div>
-                    </div>
-                    <div class="member">
-                        <div class="name">Ivan</div>
-                        <div class="email">ivan@gmail.com</div>
-                    </div>
+                <div class="members-list shadow" id="members-list">
+                    <#list members as member>
+                        <div class="member" data-container-member-id="${member.id}">
+                            <div class="member-info">
+                                <div class="name">${member.name}</div>
+                            </div>
+                            <div class="delete">
+                                <i class="fas fa-times"
+                                   data-member-id="${member.id}" onclick="deleteMember(${member.id})"></i>
+                            </div>
+                        </div>
+                    </#list>
                 </div>
             </div>
             <div class="archive-list-wrapper">
-                <div class="archive-list shadow">
-                    <div class="archive-card">
-                        <div class="archive-card-title">Title of card</div>
-                    </div>
-                    <div class="archive-card">
-                        <div class="archive-card-title">Title of card</div>
-                    </div>
-                    <div class="archive-card">
-                        <div class="archive-card-title">Title of card</div>
-                    </div>
-                    <div class="archive-card">
-                        <div class="archive-card-title">Title of card</div>
-                    </div>
+                <div class="archive-list shadow" id="archivedCardList">
+                    <#list archivedCards as card>
+                        <div class="archive-card">
+                            <div data-card-id="${card.id}" onclick="openCard(this)"
+                                 class="archive-card-title">${card.title}</div>
+                        </div>
+                    </#list>
                 </div>
             </div>
             <div class="lists" id="lists">
@@ -167,86 +136,57 @@
         </div>
     </div>
 </div>
-<div class="popup hidden" id="card">
-    <div class="card-detailed">
-        <div class="card-header">
-            <div class="title-wrapper">
-                <div class="title">
-                    Title
+<div class="popup-wrapper" id="popup">
+    <div class="popup" id="card">
+        <div class="card-detailed">
+            <div class="card-header">
+                <div class="title-wrapper">
+                    <div class="title" id="title"></div>
+                    <div class="addToArchive" onclick="addToArchive()">Archive</div>
+                    <div class="close">
+                        <i class="fas  fa-times" onclick="closeCard()"></i>
+                    </div>
                 </div>
-                <div class="edit">
-                    <i class="fas fa-pen"></i>
+                <div class="comments-header">
+                    Comments
                 </div>
             </div>
-            <div class="comments-header">
-                Comments
-            </div>
-        </div>
-        <div class="main">
-            <div class="card-details-wrapper">
-                <div class="card-details">
-                    <div class="description-title">Description</div>
-                    <div class="description">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ac velit purus. Morbi et odio dui.
-                        Aliquam erat volutpat. Pellentesque vel quam id nisl volutpat tincidunt bibendum nec ipsum.
-                        Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam euismod blandit rhoncus.
-                        Duis vehicula, enim vel ullamcorper pretium, neque augue porta magna, a finibus nisl felis in
-                        orci. Donec at pulvinar justo.
+            <div class="main">
+                <div class="card-details-wrapper">
+                    <div class="card-details">
+                        <div class="description">
+                            <div class="description-title">Description</div>
+                            <textarea class="description-input" id="description"></textarea>
+                        </div>
+                        <div class="deadline">
+                            <label class="deadline-title" for="deadline">Deadline</label>
+                            <input type="date" class="deadline-input" id="deadline">
+                        </div>
+                        <div class="tools">
+                            <div class="tool"><i class="fas fa-users"></i></div>
+                            <div class="tool"><i class="fas fa-map-marked-alt" onclick="openMap()"></i></div>
+                            <div class="tool"><i class="far fa-file-archive" id="upload"></i></div>
+                            <div class="tool"><i class="fas fa-tasks"></i></div>
+                        </div>
+                        <input id="file" type="file" name="file" style="display: none;"/>
+                        <div id="files-list" class="files">
+                        </div>
+                        <div class="member-list-wrapper" id="card-members">
+                        </div>
+                    </div>
+                    <div id="map-wrapper">
+                        <div id="map" class="map"></div>
                     </div>
                 </div>
-                <div id="map" class="map"></div>
-            <#--<div class="tools">-->
-            <#--<div class="tool"><i class="far fa-clock"></i> Deadline</div>-->
-            <#--<div class="tool"><i class="fas fa-user"></i> Member</div>-->
-            <#--<div class="tool"><i class="fas fa-folder-open"></i> Attachments</div>-->
-            <#--<div class="tool"><i class="fas fa-list"></i> Checklists</div>-->
-            <#--</div>-->
-            <#--<div class="members-wrapper">-->
-            <#--<div class="members-title">Members</div>-->
-            <#--</div>-->
-            </div>
-            <div class="comments-wrapper">
-                <div class="comments">
-                    <div class="light-comment-wrapper">
-                        <div class="light-comment">
-                            <div class="name">User</div>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </div>
+                <div class="comments-wrapper">
+                    <div class="comments" id="comments">
                     </div>
-                    <div class="light-comment-wrapper">
-                        <div class="light-comment">
-                            <div class="name">User</div>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    <div class="comment-box">
+                        <div class="member-hint" id="members-hint">
                         </div>
+                        <input type="text" class="text" placeholder="Comment.." id="comment-text">
+                        <div class="button"><i class="fas fa-paper-plane" id="send-comment"></i></div>
                     </div>
-                    <div class="light-comment-wrapper">
-                        <div class="light-comment">
-                            <div class="name">User</div>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </div>
-                    </div>
-                    <div class="light-comment-wrapper">
-                        <div class="light-comment">
-                            <div class="name">User</div>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </div>
-                    </div>
-                    <div class="light-comment-wrapper">
-                        <div class="light-comment">
-                            <div class="name">User</div>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </div>
-                    </div>
-                    <div class="light-comment-wrapper">
-                        <div class="light-comment">
-                            <div class="name">User</div>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </div>
-                    </div>
-                </div>
-                <div class="comment-box">
-                    <input type="text" class="text" placeholder="Comment..">
-                    <div class="button"><i class="fas fa-paper-plane"></i></div>
                 </div>
             </div>
         </div>
@@ -257,7 +197,8 @@
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="/js/card.js"></script>
 <script src="/js/board.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaGECOR7M1N3AAXwLVc-nI&callback=initMap"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgArTIayO6UKqGECOR7M1N3AALVc-nI&callback=initMap"></script>
 </body>
 </html>

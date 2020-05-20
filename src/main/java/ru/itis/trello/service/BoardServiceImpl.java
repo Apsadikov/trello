@@ -1,6 +1,9 @@
 package ru.itis.trello.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itis.trello.dto.BoardDto;
@@ -10,13 +13,14 @@ import ru.itis.trello.entity.BoardMemberKey;
 import ru.itis.trello.repository.BoardMemberRepository;
 import ru.itis.trello.repository.BoardRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class BoardServiceImpl implements BoardService {
     private BoardRepository boardRepository;
     private BoardMemberRepository boardMemberRepository;
+    @Value("${page.size}")
+    private int pageSize;
 
     @Autowired
     public BoardServiceImpl(BoardRepository boardRepository, BoardMemberRepository boardMemberRepository) {
@@ -26,8 +30,9 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public List<BoardDto> getBoards(Long memberId) {
-        return BoardDto.from(boardRepository.getAllBoardsByMemberId(memberId));
+    public Page<BoardDto> getBoards(Long memberId, Integer page) {
+        Page<Board> boardPage = boardRepository.getAllBoardsByMemberId(memberId, PageRequest.of(page, pageSize));
+        return boardPage.map(BoardDto::from);
     }
 
     @Override

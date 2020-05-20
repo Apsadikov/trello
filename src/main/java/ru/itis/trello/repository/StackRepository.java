@@ -5,5 +5,6 @@ import org.springframework.stereotype.Repository;
 import ru.itis.trello.entity.Stack;
 
 @Repository
-public interface StackRepository extends JpaRepository<Stack, Long> {
+public interface StackRepository extends JpaRepository<Stack, Long>, AdditionalStackRepository {
+
 }

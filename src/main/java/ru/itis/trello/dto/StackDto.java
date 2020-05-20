@@ -14,11 +14,13 @@ import java.util.stream.Collectors;
 public class StackDto {
     private Long id;
     private String title;
+    private List<CardDto> cards;
 
     public static StackDto from(Stack stack) {
         return StackDto.builder()
                 .title(stack.getTitle())
                 .id(stack.getId())
+                .cards(CardDto.from(stack.getCards()))
                 .build();
     }
 

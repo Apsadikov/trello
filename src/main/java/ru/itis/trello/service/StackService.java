@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public interface StackService {
-    void addStack(StackDto stackDto, Long userId, Long boardId) throws AccessException;
+    void addStack(StackDto stackDto, Long userId, Long boardId);
 
-    List<Stack> getStacks(Long boardId);
+    List<StackDto> getStacks(Long boardId);
 }

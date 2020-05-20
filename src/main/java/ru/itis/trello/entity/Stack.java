@@ -3,6 +3,7 @@ package ru.itis.trello.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -31,5 +32,6 @@ public class Stack {
     private Board board;
 
     @OneToMany(mappedBy = "stack")
-    private List<Card> cards;
+    @Builder.Default
+    private List<Card> cards = new ArrayList<>();
 }

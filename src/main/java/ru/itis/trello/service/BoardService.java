@@ -1,15 +1,15 @@
 package ru.itis.trello.service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import ru.itis.trello.dto.BoardDto;
 import ru.itis.trello.entity.Board;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public interface BoardService {
-    List<BoardDto> getBoards(Long memberId);
+    Page<BoardDto> getBoards(Long memberId, Integer page);
 
     Optional<Board> getBoard(Long boardId);
 

@@ -1,44 +1,105 @@
 package ru.itis.trello.service;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.itis.trello.dto.FileDto;
+import ru.itis.trello.entity.Card;
+import ru.itis.trello.entity.Stack;
+import ru.itis.trello.repository.BoardMemberRepository;
+import ru.itis.trello.repository.CardRepository;
+import ru.itis.trello.repository.FileRepository;
+import ru.itis.trello.repository.StackRepository;
+import ru.itis.trello.util.FileNameGenerator;
+import ru.itis.trello.util.exception.AccessException;
+import ru.itis.trello.util.exception.NotFoundException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
-@Component
+@Service
 public class FileServiceImpl implements FileService {
-    private Environment environment;
-    private BCryptPasswordEncoder bCrypt;
+    private CardRepository cardRepository;
+    private FileRepository fileRepository;
+    private BoardMemberRepository boardMemberRepository;
+    private StackRepository stackRepository;
+    @Value("${storage.path}")
+    private String storage;
 
     @Autowired
-    public FileServiceImpl(BCryptPasswordEncoder bCrypt, Environment environment) {
-        this.bCrypt = bCrypt;
-        this.environment = environment;
+    public FileServiceImpl(CardRepository cardRepository, BoardMemberRepository boardMemberRepository,
+                           StackRepository stackRepository, FileRepository fileRepository) {
+        this.cardRepository = cardRepository;
+        this.boardMemberRepository = boardMemberRepository;
+        this.stackRepository = stackRepository;
+        this.fileRepository = fileRepository;
     }
 
     @Override
-    public String uploadFile(MultipartFile file) throws IOException {
-        String extension = file.getOriginalFilename()
-                .substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
-        String name = bCrypt.encode(file.getOriginalFilename()).replaceAll("/\\W/", "");
-        File newFile = new File(environment.getProperty("storage.path") + name + extension);
-        IOUtils.copyLarge(file.getInputStream(), new FileOutputStream(newFile));
-        return newFile.getName();
-    }
-
-    @Override
-    public File loadFile(String fileName) throws FileNotFoundException {
-        File file = new File(String.valueOf(environment.getProperty("storage.path") + fileName));
-        if (file.exists()) {
-            return file;
+    public List<FileDto> getFiles(Long cardId, Long userId) throws AccessException, NotFoundException {
+        Optional<Card> optionalCard = cardRepository.findById(cardId);
+        if (optionalCard.isPresent()) {
+            Optional<Stack> optionalStack = stackRepository.findById(optionalCard.get().getStack().getId());
+            if (optionalStack.isPresent()) {
+                if (boardMemberRepository.isBoardMemberExist(optionalStack.get().getBoard().getId(), userId).isPresent()) {
+                    return FileDto.from(fileRepository.findByCard(Card.builder().id(cardId).build()));
+                } else {
+                    throw new AccessException();
+                }
+            } else {
+                throw new NotFoundException();
+            }
+        } else {
+            throw new NotFoundException();
         }
-        return null;
+    }
+
+    @Override
+    public Optional<FileDto> getFile(Long userId, String fileName) {
+        Optional<ru.itis.trello.entity.File> fileOptional = fileRepository.findByFile(fileName);
+        FileDto fileDto = null;
+        if (fileOptional.isPresent()) {
+            File file = new File(storage + fileName);
+            fileDto = FileDto.builder()
+                    .file(fileName)
+                    .realFile(file)
+                    .build();
+        }
+        return Optional.ofNullable(fileDto);
+    }
+
+    @Override
+    public String addFile(Long userId, MultipartFile file, Long cardId) throws AccessException, NotFoundException, IOException {
+        Optional<Card> optionalCard = cardRepository.findById(cardId);
+        if (optionalCard.isPresent()) {
+            Optional<Stack> optionalStack = stackRepository.findById(optionalCard.get().getStack().getId());
+            if (optionalStack.isPresent()) {
+                if (boardMemberRepository.isBoardMemberExist(optionalStack.get().getBoard().getId(), userId).isPresent()) {
+                    String extension = file.getOriginalFilename()
+                            .substring(file.getOriginalFilename().lastIndexOf("."), file.getOriginalFilename().length());
+                    File newFile = new File(storage + FileNameGenerator.generate() + extension);
+                    IOUtils.copyLarge(
+                            file.getInputStream(),
+                            new FileOutputStream(newFile)
+                    );
+                    fileRepository.save(ru.itis.trello.entity.File.builder()
+                            .card(Card.builder().id(cardId).build())
+                            .file(newFile.getName())
+                            .build());
+                    return newFile.getName();
+                } else {
+                    throw new AccessException();
+                }
+            } else {
+                throw new NotFoundException();
+            }
+        } else {
+            throw new NotFoundException();
+        }
     }
 }

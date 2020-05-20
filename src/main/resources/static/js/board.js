@@ -2,12 +2,12 @@ let body = $("#body");
 let boardId = body.data("id");
 let token = body.data("csrf");
 
-function ajax(url, type, body = {}, success) {
+function ajax(url, type, body, success) {
     $.ajax({
         url: url,
         headers: {"X-CSRF-TOKEN": token},
         type: type,
-        body: body,
+        data: body,
         success: function (data) {
             if (success !== undefined) {
                 success(data);
@@ -46,8 +46,8 @@ search.on("click", function () {
             users.attr("class", "users shadow");
             for (let i = 0; i < data.length; i++) {
                 users.append(
-                    "<div class=\"user\">" +
-                    "<div class=\"name-small\" data-id=\"" + data[i].id + "\">" + data[i].name + "</div>" +
+                    "<div class='user'>" +
+                    "<div class='name-small' onclick='addUserToBoard(" + data[i].id + ', \"' + data[i].name + "\")'>" + data[i].name + "</div>" +
                     "</div>"
                 );
             }
@@ -59,18 +59,30 @@ search.on("click", function () {
     }
 });
 
-users.on("click", function (ev) {
-    let element = ev.target;
-    if (element.dataset.id !== undefined) {
-        let userId = element.dataset.id;
-        users.empty();
-        query.val("");
-        users.attr("class", "users shadow hidden");
-        ajax('/api/boards/' + boardId + "/members", "POST", {
-            invited_user_id: userId
-        });
-    }
-});
+function addUserToBoard(userId, userName) {
+    users.empty();
+    query.val("");
+    users.attr("class", "users shadow hidden");
+    ajax('/api/boards/' + boardId + "/members", "POST", {
+        invited_user_id: userId
+    }, function (data) {
+        let attr = "[data-member-id=" + userId + "]";
+        let isNotExist = $(attr).length === 0;
+        if (isNotExist) {
+            let html =
+                "<div class=\"member\" data-container-member-id='" + userId + " '>" +
+                "     <div class=\"member-info\">" +
+                "         <div class=\"name\">" + userName + "</div>" +
+                "     </div>" +
+                "     <div class=\"delete\">" +
+                "         <i class=\"fas fa-times\"\n" +
+                "            data-member-id='" + userId + "' onclick='deleteMember(" + userId + ")'></i>" +
+                "     </div>" +
+                "</div>";
+            memberList.append(html);
+        }
+    });
+}
 
 let searchBox = $("#search-box");
 let addUser = $("#add-member");
@@ -105,7 +117,7 @@ let addStack = $("#add-stack");
 let stackTitle = $("#stack-title");
 let lists = $("#lists");
 addStack.on("click", function () {
-    let title = stackTitle.val().trim();
+    let title = stackTitle.val();
     if (title.length === 0) return;
     ajax('/api/boards/' + boardId + "/stacks", "POST", {
         title: title
@@ -137,20 +149,13 @@ lists.on("click", function (event) {
             let attrFirstCard = "[data-stack-id=" + event.target.dataset.addStackId + "]";
             let firstCard = $(attrFirstCard);
             firstCard.after(
-                "<div draggable=\"true\" ondragstart=\"drag(event)\" class=\"card shadow last-card\" data-card-id=\"" + card.id + "\">" +
+                "<div draggable=\"true\" onclick=\"openCard(this)\" ondragstart=\"drag(event)\" class=\"card shadow last-card\" data-card-id=\"" + card.id + "\">" +
                 "   <div class=\"card-title\">" + card.title + "</div>" +
                 "</div>");
             title.val("");
         });
     }
 });
-
-let card = $("#card");
-
-function openCard(card) {
-    card.attr("class", "popup");
-    console.log(card.dataset.cardId);
-}
 
 function allowDrag(ev) {
     ev.preventDefault();
@@ -165,10 +170,7 @@ function drop(ev, block) {
     ev.preventDefault();
     let cardId = ev.dataTransfer.getData("card-id");
     let cardTitle = ev.dataTransfer.getData("card-title");
-    ajax('/api/cards/' + cardId + "/action=move", "PUT", {
-            stack_id: block.dataset.containerStackId,
-            board_id: boardId,
-        },
+    ajax('/api/boards/' + boardId + '/stacks/' + block.dataset.containerStackId + '/cards/' + cardId, "PUT", {},
         function () {
             let attr = "[data-card-id=" + cardId + "]";
             $(attr).remove();
@@ -178,25 +180,36 @@ function drop(ev, block) {
         });
 }
 
-let map = document.getElementById("map"),
-    lat = 56,
-    lng = 58;
+let members = $("#members");
+let memberList = $("#members-list");
+let membersToggle = false;
+members.on("click", function () {
+    if (!membersToggle) {
+        memberList.show();
+    } else {
+        memberList.hide();
+    }
+    membersToggle = !membersToggle;
+});
 
-function initMap() {
-    let coordinates = {lat: lat, lng: lng};
-    map = new google.maps.Map(map, {
-        center: coordinates,
-        zoom: 16
-    });
-    let marker = new google.maps.Marker({
-        position: coordinates,
-        map: map,
-        icon: "http://localhost:8080/image/online.png"
-    });
-
-    map.addListener('click', function (data) {
-        let lat = data.latLng.lat();
-        let lng = data.latLng.lng();
-        marker.setPosition({lat: lat, lng: lng});
+function deleteMember(userId) {
+    ajax("/api/boards/" + boardId + "/members", "DELETE", {
+        deleted_user_id: userId
+    }, function () {
+        let attr = "[data-container-member-id=" + userId + "]";
+        let memberContainer = $(attr);
+        memberContainer.remove();
     });
 }
+
+let archive = $("#archive");
+let archiveToggle = false;
+let archiveList = $("#archivedCardList");
+archive.on("click", function () {
+    if (!archiveToggle) {
+        archiveList.show();
+    } else {
+        archiveList.hide();
+    }
+    archiveToggle = !archiveToggle;
+});

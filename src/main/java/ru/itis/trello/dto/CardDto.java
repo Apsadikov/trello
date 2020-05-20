@@ -3,6 +3,7 @@ package ru.itis.trello.dto;
 import lombok.*;
 import ru.itis.trello.entity.Card;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,13 +19,17 @@ public class CardDto {
 
     private StackDto stack;
 
+    private String description;
+
+    private Date deadline;
+
     private boolean isArchived;
 
     public static CardDto from(Card card) {
         return CardDto.builder()
                 .id(card.getId())
-                .isArchived(card.isArchived())
-                .stack(StackDto.from(card.getStack()))
+                .deadline(card.getDeadline())
+                .description(card.getDescription())
                 .title(card.getTitle())
                 .build();
     }

@@ -3,6 +3,7 @@ package ru.itis.trello.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,4 +27,9 @@ public class Card {
     @Column(name = "is_archived")
     private boolean isArchived;
 
+    @Column(name = "deadline")
+    private Date deadline;
+
+    @Column(name = "description", length = 1024)
+    private String description;
 }

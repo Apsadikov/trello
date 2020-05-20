@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.itis.trello.util.validation.Title;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
@@ -13,7 +14,6 @@ import javax.validation.constraints.Size;
 @Data
 @Builder
 public class AddBoardForm {
-    @Size(min = 1, max = 45)
-    @NotEmpty
+    @Title
     private String title;
 }
